@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KXON</title>
+
+<style>
+
+
+.musicPlayer{
+    box-shadow:
+    0 0 20px rgba(255,255,255,0.15),
+    0 0 40px rgba(255,255,255,0.08);
+}
+
+/* WINDOW GLASS */
+
+.window{
+    background:rgba(255,255,255,0.75);
+    -webkit-backdrop-filter:blur(18px);
+    backdrop-filter:blur(18px);
+}
+/* ICON HOVER */
+
+.icon{
+    transition:0.3s;
+}
+
+.icon:hover{
+    transform:translateY(-5px) scale(1.03);
+}
+
+/* CURSOR GLOW */
+
+.cursorGlow{
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.35);
+    position:fixed;
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    -webkit-backdrop-filter:blur(5px);
+    backdrop-filter:blur(5px);
+    z-index:9999;
+    box-shadow:0 0 25px white;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    overflow:hidden;
+    background:black;
+}
+
+/* เอฟเฟกต์ */
+
+.fadeOut{
+    animation:fadeOut 1.2s forwards;
+}
+
+.fadeIn{
+    animation:fadeIn 1.2s forwards;
+}
+
+@keyframes fadeOut{
+    from{opacity:1;}
+    to{opacity:0;}
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+/* LOGIN */
+
+#loginScreen{
+    width:100%;
+    height:100vh;
+    background:url('https://i.pinimg.com/1200x/f3/0b/49/f30b49a30bebb8b5521effe771ecf244.jpg') center/cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:absolute;
+}
+
+.loginBox{
+    -webkit-backdrop-filter:blur(15px);
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    color:white;
+    width:320px;
+}
+
+.profile{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:15px;
+    border:3px solid white;
+}
+
+.loginBtn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* LOADING */
+
+#loadingScreen{
+    width:100%;
+    height:100vh;
+    background:black;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    position:absolute;
+}
+
+.loader{
+    width:60px;
+    height:60px;
+    border:5px solid rgba(255,255,255,0.2);
+    border-top:5px solid white;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+/* DESKTOP */
+
+#desktop{
+    width:100%;
+    height:100vh;
+    background:url('https://i.pinimg.com/originals/5c/43/d2/5c43d280ddfbd4a1b4c571874e699f8d.gif') center/cover;
+    display:none;
+    position:absolute;
+}
+.cornerImage{
+    position:absolute;
+
+    right:30px;
+    bottom:30px;
+
+    width:220px;
+
+    border-radius:20px;
+
+    box-shadow:
+    0 0 25px rgba(255,255,255,0.15);
+
+    transition:0.3s;
+}
+
+.cornerImage:hover{
+    transform:scale(1.03);
+}
+/* ICON */
+
+.icon{
+    width:100px;
+    text-align:center;
+    color:rgb(0, 0, 0);
+    margin:20px;
+    cursor:pointer;
+}
+
+.icon img{
+    width:70px;
+    border-radius:18px;
+}
+
+/* WINDOW */
+
+.window{
+    width:550px;
+    height:350px;
+    background:white;
+    border-radius:20px;
+    position:absolute;
+    top:120px;
+    left:200px;
+    display:none;
+    overflow:hidden;
+    box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+.windowbigbox{
+    width:750px;
+    height:550px;
+    background:white;
+    border-radius:20px;
+    position:absolute;
+    top:120px;
+    left:200px;
+    display:none;
+    overflow:hidden;
+    box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+.windowHeader{
+    background:#f1f1f1;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+}
+
+.closeBtn{
+    width:30px;
+    height:30px;
+    border:none;
+    border-radius:50%;
+    background:red;
+    color:white;
+    cursor:pointer;
+}
+
+.windowContent{
+    padding:20px;
+    line-height:1.8;
+}
+
+
+.start{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.start:hover{
+    transform:scale(1.1);
+}
+
+/* MUSIC PLAYER */
+
+.musicPlayer{
+    position:absolute;
+    right:30px;
+    top:30px;
+    width:280px;
+    padding:20px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.12);
+    -webkit-backdrop-filter:blur(20px);
+    backdrop-filter:blur(20px);
+    color:white;
+    text-align:center;
+}
+
+/* แผ่นเพลง */
+
+.disk{
+    width:180px;
+    height:180px;
+    margin:auto;
+    border-radius:50%;
+    overflow:hidden;
+    animation:spinDisk 5s linear infinite;
+    animation-play-state:paused;
+    border:6px solid rgba(255,255,255,0.2);
+}
+
+.disk img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+@keyframes spinDisk{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+}
+
+.controls button{
+    border:none;
+    padding:10px 15px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.volume{
+    width:100%;
+    margin-top:15px;
+    accent-color:white;
+}
+
+/* EFFECT */
+
+.effect{
+    position:absolute;
+    top:-50px;
+    font-size:25px;
+    animation:fall linear forwards;
+    pointer-events:none;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(360deg);
+        opacity:0;
+    }
+}
+.windowContent{
+    padding:20px;
+    line-height:1.8;
+
+}
+/* GALLERY */
+
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    max-height:230px;
+    overflow-y:auto;
+    padding-right:5px;
+}
+
+.gallery::-webkit-scrollbar{
+    width:8px;
+}
+
+.gallery::-webkit-scrollbar-thumb{
+    background:rgba(0,0,0,0.3);
+    border-radius:20px;
+}
+
+.gallery img{
+    width:100%;
+    border-radius:15px;
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.gallery img:hover{
+    transform:scale(1.05);
+}
+
+/* VIDEO PLAYER */
+
+.video-player{
+    border-radius:15px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="cursorGlow" id="cursorGlow"></div>
+<!-- LOGIN -->
+
+<div id="loginScreen">
+
+    <div class="loginBox">
+
+        <img class="profile" src="profile.jpg" alt="Profile picture">
+
+        <h1>KXON</h1>
+
+        <br>
+
+        <button class="loginBtn" onclick="login()">
+            Sign in
+        </button>
+
+    </div>
+
+</div>
+
+<!-- LOADING -->
+
+<div id="loadingScreen">
+
+    <div class="loader"></div>
+
+</div>
+
+<!-- DESKTOP -->
+
+<div id="desktop">
+
+    <!-- ABOUT -->
+
+    <div class="icon" onclick="openWindow('aboutWindow')">
+
+        <img src="icon.jpg">
+
+        <p>About Me</p>
+
+    </div>
+    <img src="calender.png" class="cornerImage">
+    <!-- GALLERY -->
+
+    <div class="icon" onclick="openWindow('galleryWindow')">
+
+        <img src="folder.png">
+
+        <p>Gallery</p>
+
+    </div>
+    <!-- NOTE -->
+
+<div class="icon" onclick="openWindow('noteWindow')">
+
+    <img src="scuba.gif">
+
+    <p>About Us</p>
+
+</div>
+<!-- VIDEO -->
+
+<div class="icon" onclick="openWindow('videoWindow')">
+
+    <img src="giphy.gif">
+
+    <p>Video</p>
+
+</div>
+    <!-- ABOUT WINDOW -->
+
+    <div class="window" id="aboutWindow">
+
+        <div class="windowHeader">
+
+            About Me
+
+            <button class="closeBtn" onclick="closeWindow('aboutWindow')">
+                X
+            </button>
+
+        </div>
+
+        <div class="windowContent">
+
+            <h2>Hello 👋</h2>
+
+            <p>
+                My name is Kron<br>
+                I love coding and learning new things<br>
+                and i made this for my girlfriend and i hope she will like it<br>
+                but if you are not my girlfriend and you are seeing this, i hope you like it too 💖
+            </p>
+
+            <br>
+
+            <p>
+                Discord : _bluebutterfly<br>
+                Instagram : pxrk1ns0n_b0yyyy
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- GALLERY WINDOW -->
+
+    <div class="window" id="galleryWindow">
+
+        <div class="windowHeader">
+
+            Gallery
+
+            <button class="closeBtn" onclick="closeWindow('galleryWindow')">
+                X
+            </button>
+
+        </div>
+
+        <div class="windowContent">
+
+            <div class="gallery">
+
+                <img src="1.png">
+                <img src="2.png">
+                <img src="3.png">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+                <img src="scuba.gif">
+
+            </div>
+
+        </div>
+
+    </div>
+<!-- NOTE WINDOW -->
+
+<div class="windowbigbox" id="noteWindow">
+
+    <div class="windowHeader">
+
+        About Us
+
+        <button class="closeBtn" onclick="closeWindow('noteWindow')">
+            X
+        </button>
+
+    </div>
+
+    <div class="windowContent">
+
+
+
+<h1>Yo this website make for keep good memories</h1>
+ The first time I saw her was in Roblox.  
+We talked about studying, and Then I asked her if I could join her Discord. " I just want to talk and watch you play games." That's what I said. After that
+our relationship started to grow. We've talked a lot, spending time together,  playing games every day.
+<p>I asked her to be my girlfriend on New Year’s, but I was too drunk to control myself 😭</p>  
+So technically, we got together after New Year hahaha.
+
+Now we’ve been together for 4 months, <p>and I wanted to make this website to keep our good memories together 💖</p>
+
+I hope we’ll stay together for a very long time.
+
+        <picture>
+            <img src="scuba.gif" alt="A playful kitten" style="float: right;">
+        </picture>
+    </div>
+
+</div>
+<!-- VIDEO WINDOW -->
+
+<div class="window" id="videoWindow">
+
+    <div class="windowHeader">
+
+        our video
+
+        <button class="closeBtn" onclick="closeWindow('videoWindow')">
+            X
+        </button>
+
+    </div>
+
+    <div class="windowContent">
+
+        <video
+        width="100%"
+        height="270"
+        controls
+        class="video-player"
+        >
+
+            <source src="IMG_8541 (1).mp4" type="video/mp4">
+
+        </video>
+
+    </div>
+
+</div>
+    <!-- MUSIC PLAYER -->
+
+    <div class="musicPlayer">
+
+        <div class="disk" id="disk">
+
+            <img id="cover" src="mcon.jpg">
+
+        </div>
+
+        <br>
+
+        <h3 id="songName">
+            Lucky
+        </h3>
+
+        <audio id="audio"></audio>
+
+        <div class="controls">
+
+            <button onclick="prevSong()">⏮</button>
+
+            <button onclick="toggleMusic()" id="playBtn">
+                ▶
+            </button>
+
+            <button onclick="nextSong()">⏭</button>
+
+        </div>
+
+        <input 
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="1"
+        class="volume"
+        onchange="changeVolume(this.value)"
+        >
+
+    </div>
+<script>
+
+/* LOGIN */
+
+function login(){
+
+    const loginScreen = document.getElementById("loginScreen");
+
+    loginScreen.classList.add("fadeOut");
+
+    setTimeout(() => {
+
+        loginScreen.style.display = "none";
+
+        const loading = document.getElementById("loadingScreen");
+
+        loading.style.display = "flex";
+
+        loading.classList.add("fadeIn");
+
+        setTimeout(() => {
+
+            loading.classList.add("fadeOut");
+
+            setTimeout(() => {
+
+                loading.style.display = "none";
+
+                const desktop = document.getElementById("desktop");
+
+                desktop.style.display = "block";
+
+                desktop.classList.add("fadeIn");
+
+            },1200);
+
+        },2500);
+
+    },1200);
+
+}
+
+/* WINDOWS */
+
+function openWindow(id){
+
+    document.getElementById(id).style.display = "block";
+
+}
+
+function closeWindow(id){
+
+    document.getElementById(id).style.display = "none";
+
+}
+
+/* MUSIC */
+
+const songs = [
+
+    {
+        name:"Lucky",
+        src:"Lucky [LXIEBWnqiBA].mp3",
+        cover:"mcon.jpg"
+    },
+
+    {
+        name:"PUN",
+        src:"music1.mp3",
+        cover:"pun.jpg"
+    }
+
+];
+
+let currentSong = 0;
+
+const audio = document.getElementById("audio");
+
+const cover = document.getElementById("cover");
+
+const songName = document.getElementById("songName");
+
+const disk = document.getElementById("disk");
+
+const playBtn = document.getElementById("playBtn");
+
+let effectInterval;
+
+function loadSong(){
+
+    audio.src = songs[currentSong].src;
+
+    cover.src = songs[currentSong].cover;
+
+    songName.innerHTML = songs[currentSong].name;
+
+}
+
+loadSong();
+
+function toggleMusic(){
+
+    if(audio.paused){
+
+        audio.play();
+
+        playBtn.innerHTML = "⏸";
+
+        disk.style.animationPlayState = "running";
+
+        startEffects();
+
+    }else{
+
+        audio.pause();
+
+        playBtn.innerHTML = "▶";
+
+        disk.style.animationPlayState = "paused";
+
+        stopEffects();
+
+    }
+
+}
+
+function nextSong(){
+
+    currentSong++;
+
+    if(currentSong >= songs.length){
+
+        currentSong = 0;
+
+    }
+
+    loadSong();
+
+    audio.play();
+
+    startEffects();
+
+    disk.style.animationPlayState = "running";
+
+}
+
+function prevSong(){
+
+    currentSong--;
+
+    if(currentSong < 0){
+
+        currentSong = songs.length - 1;
+
+    }
+
+    loadSong();
+
+    audio.play();
+
+    startEffects();
+
+    disk.style.animationPlayState = "running";
+
+}
+
+function changeVolume(value){
+
+    audio.volume = value;
+
+}
+
+/* EFFECT */
+
+function startEffects(){
+
+    stopEffects();
+
+    effectInterval = setInterval(() => {
+
+        const effect = document.createElement("div");
+
+        effect.classList.add("effect");
+
+        effect.innerHTML = Math.random() > 0.5 ? "💖" : "🌸";
+
+        effect.style.left = Math.random()*100 + "vw";
+
+        effect.style.animationDuration = (3 + Math.random()*3) + "s";
+
+        document.body.appendChild(effect);
+
+        setTimeout(() => {
+
+            effect.remove();
+
+        },6000);
+
+    },500);
+
+}
+
+function stopEffects(){
+
+    clearInterval(effectInterval);
+
+}
+const cursorGlow = document.getElementById("cursorGlow");
+
+document.addEventListener("mousemove",(e)=>{
+
+    cursorGlow.style.left = e.clientX + "px";
+
+    cursorGlow.style.top = e.clientY + "px";
+
+});
+</script>
+
+</body>
+</html>
